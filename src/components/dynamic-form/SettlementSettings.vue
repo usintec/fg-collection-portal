@@ -1,0 +1,123 @@
+<script setup lang="ts">
+import MaterialIcon from '@/components/icon/MaterialIcon.vue'
+import TextInput from '@/components/inputs/text/TextInput.vue'
+import type { InputElement } from './types'
+import ButtonInput from '../inputs/button/ButtonInput.vue'
+import { ref } from 'vue'
+import CheckBox from '../inputs/check/CheckBox.vue'
+
+const emit = defineEmits<{
+  (e: 'change', v: Partial<InputElement>): void
+  (e: 'remove', settingId: string): void
+  (e: 'add'): void
+}>()
+
+const loading = ref(false)
+const isChecked = ref(false)
+
+const check = () => {
+  isChecked.value = !isChecked.value
+}
+
+const save = async () => {
+  emit('add')
+}
+
+const removeAt = (index: any) => {
+  if (paymentSettingsList.value.length > 1) {
+    paymentSettingsList.value.splice(index, 1)
+  }
+}
+
+const addNew = async (index: number) => {
+  paymentSettingsList.value.splice(index + 1, 0, { id: Date.now() })
+}
+
+const paymentSettingsList = ref([{ id: 1 }])
+</script>
+<template>
+  <div class="flex flex-col w-full">
+    <div class="flex justify-between items-center my-3">
+      <div>
+        <span class="bg-[#F3FFF9] p-2 rounded-md px-4 text-sm text-[#1E754C] me-3"
+          >Provider Name: <strong>MFS Africa</strong></span
+        >
+
+        <span class="text-[#204458] text-sm"
+          ><strong>Base Url</strong>: https://api.mfsafrica.com/v3</span
+        >
+      </div>
+
+      <div class="w-[15%]">
+        <ButtonInput
+          class="text-sm !text-[#FF144D] h-11"
+          :onClick="console.log"
+          :bg="'bg-[#FFD0D6]'"
+          :loading="loading"
+        >
+          Remove Provider
+        </ButtonInput>
+      </div>
+    </div>
+
+    <div
+      class="text-sm text-dark_green h-28 flex gap-4 justify-between items-center px-1 border-b"
+      v-for="(item, index) in paymentSettingsList"
+      :key="index"
+    >
+      <TextInput
+        placeholder="Type here"
+        label="Enter Key"
+        :onChange="console.log"
+        class="w-4/12 h-16"
+      />
+
+      <TextInput
+        placeholder="Type here"
+        label="Enter Key"
+        :onChange="console.log"
+        class="w-4/12 h-16"
+      />
+
+      <div class="flex items-center text-dark_green mt-5">
+        <CheckBox @onChecked="check" :activeGreen="isChecked" class="" />
+        <span
+          :class="{
+            '': !isChecked,
+            'text-green-500': isChecked
+          }"
+          class="pl-2"
+          >Secret</span
+        >
+      </div>
+
+      <div class="w-20 ml-5">
+        <ButtonInput
+          class="text-sm !text-[#204458] h-11 mt-5"
+          :onClick="save"
+          :bg="'bg-[#DEEFFA]'"
+          :loading="loading"
+        >
+          Save
+        </ButtonInput>
+      </div>
+
+      <div class="w-24">
+        <ButtonInput
+          class="text-sm !text-[#204458] h-11 mt-5"
+          :onClick="() => addNew(index)"
+          :bg="'bg-[#DEEFFA]'"
+          :loading="loading"
+        >
+          Add Key
+        </ButtonInput>
+      </div>
+
+      <MaterialIcon
+        icon="delete"
+        class="text-lg mt-5 hover:cursor-pointer"
+        @click="removeAt(index)"
+      />
+    </div>
+  </div>
+</template>

@@ -1,0 +1,4 @@
+# Getting started
+On a new installation run
+`docker-compose run app yarn install`
+
